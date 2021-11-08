@@ -116,4 +116,3 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-!/tsconfig.json
