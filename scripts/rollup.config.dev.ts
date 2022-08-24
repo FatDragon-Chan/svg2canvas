@@ -8,7 +8,7 @@ export default {
     plugins: [
         ...baseConfig.plugins,
         serve({
-            port: 8080,
+            port: '8080',
             contentBase: ['dist', 'examples/brower'],
             openPage: 'index.html',
         }),

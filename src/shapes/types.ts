@@ -1,5 +1,5 @@
 export interface Shape {
-  draw(ctx: any, osCtx: any): void;
+  draw(ctx: any): void;
 
   on(name: string, listener: any): void;
 

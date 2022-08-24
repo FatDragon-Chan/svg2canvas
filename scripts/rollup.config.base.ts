@@ -52,7 +52,7 @@ export default {
     plugins: [
         json(),
         clear({
-            targets: ['dist']
+            targets: ['lib']
         }),
         alias(),
         replace({

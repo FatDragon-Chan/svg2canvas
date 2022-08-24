@@ -1,16 +1,18 @@
 import Base from './Base';
+import {idToRgba} from "@/helpers";
 
 interface RectProps {
   points: string;
   strokeWidth?: number;
   strokeColor?: string;
   fillColor?: string;
-  translate: Array<string>;
+  translate: Array<string | number>;
+  nanoid: string
 }
 
 export default class Polygon extends Base {
   constructor(private props: RectProps) {
-    super();
+    super(props.nanoid);
     this.props.fillColor = this.props.fillColor || '#fff';
     this.props.strokeColor = this.props.strokeColor || '#000';
     this.props.strokeWidth = this.props.strokeWidth || 1;
@@ -35,7 +37,6 @@ export default class Polygon extends Base {
     });
     ctx.save();
     ctx.beginPath();
-    ctx.scale(0.5, 0.5);
     ctx.translate(translate[0], translate[1]);
     xPointList.forEach((point, index) => {
       if (index <= 0) {
@@ -47,5 +48,13 @@ export default class Polygon extends Base {
     ctx.fillStyle = fillColor;
     ctx.fill();
     ctx.restore();
+  }
+
+  clone() {
+    const [r, g, b, a] = idToRgba(this.id);
+    return new Polygon({
+      ...this.props,
+      fillColor: `rgba(${r}, ${g}, ${b}, ${a})`,
+    });
   }
 }

@@ -9,17 +9,19 @@ interface RectProps {
   fillColor?: string;
   d: string;
   translate: Array<string | number>;
+  dpr: number
+  nanoid: string
 }
 
 export default class Path extends Base {
   constructor(private props: RectProps) {
-    super();
+    super(props.nanoid);
     this.props.fillColor = this.props.fillColor || '#fff';
   }
 
   draw(ctx: any) {
     const {
-      fillColor, d, translate = ['0', '0'],
+      fillColor, d, translate = [0, 0],
     } = this.props;
 
     if(!isSvgPath(d)) {
@@ -31,7 +33,6 @@ export default class Path extends Base {
 
     ctx.save()
     ctx.beginPath();
-    ctx.scale(0.5, 0.5);
     ctx.translate(translate[0], translate[1]);
     if(_path.length) {
       _path.forEach((c) => {
