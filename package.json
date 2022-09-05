@@ -1,6 +1,6 @@
 {
   "name": "@ahone/svg2canvas",
-  "version": "0.0.2-beta",
+  "version": "0.0.2-beta2",
   "description": "",
   "main": "lib/svg2canvas.umd.js",
   "module": "lib/svg2canvas.esm.js",
