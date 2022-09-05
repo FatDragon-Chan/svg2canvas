@@ -37,6 +37,7 @@ export default class Polygon extends Base {
     });
     ctx.save();
     ctx.beginPath();
+    ctx.scale(0.5, 0.5)
     ctx.translate(translate[0], translate[1]);
     xPointList.forEach((point, index) => {
       if (index <= 0) {

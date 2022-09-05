@@ -26,10 +26,9 @@ export class Stage {
   private shapesActionsList: string[]
   private shapesActionsProxy: {[key: string]: boolean}
 
-  private onChange: any
+  private onSelected: any
 
-  constructor({canvasRes, osCanvasRes,dpr = 2}: StageConstructorProps, callback?: any) {
-    const {offsetWidth: width, offsetHeight: height} = canvasRes
+  constructor({canvasRes, osCanvasRes,width, height, dpr = 2}: StageConstructorProps, callback?: any) {
     this.width = width;
     this.height = height;
     this.canvas = canvasRes;
@@ -55,7 +54,7 @@ export class Stage {
 
     this.shapesSet = new Set();
 
-    this.onChange = callback
+    this.onSelected = callback
 
     this.shapesActionsList = []
     this.setProxy()
@@ -78,8 +77,8 @@ export class Stage {
         const shape = renderFunc && renderFunc({...el, dpr: this.dpr, nanoid})
         if (!shape) return
         nature && nature === 'interaction' && nanoid && shape.on(EventNames.click, () => {
-          const res = Reflect.get(this.shapesActionsProxy, nanoid)
-          Reflect.set(this.shapesActionsProxy, nanoid, !res)
+          Reflect.set(this.shapesActionsProxy, nanoid, true)
+          this.onSelected(nanoid)
           this.render()
         })
         this.add(shape)
@@ -193,8 +192,8 @@ export class Stage {
 
   proxySetFn(target, key, value) {
     Reflect.set(target, key, value)
-    //数据有变化 触发onChange
-    this.onChange && this.onChange(key)
+    //数据有变化 触发onSelected
+    this.onSelected && this.onSelected(key)
     return true
   }
 }

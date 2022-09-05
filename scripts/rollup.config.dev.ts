@@ -12,8 +12,6 @@ export default {
             contentBase: ['dist', 'examples/brower'],
             openPage: 'index.html',
         }),
-        livereload({
-            watch: 'examples/brower',
-        })
+        livereload()
     ]
 }
