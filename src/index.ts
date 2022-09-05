@@ -28,7 +28,8 @@ export class Stage {
 
   private onChange: any
 
-  constructor({canvasRes, osCanvasRes,width, height,dpr = 2}: StageConstructorProps, callback?: any) {
+  constructor({canvasRes, osCanvasRes,dpr = 2}: StageConstructorProps, callback?: any) {
+    const { width, height } = canvasRes;
     this.width = width;
     this.height = height;
     this.canvas = canvasRes;
