@@ -26,9 +26,9 @@ export class Stage {
   private shapesActionsList: string[]
   private shapesActionsProxy: {[key: string]: boolean}
 
-  private onSelected: any
+  private onSelected?: (key: string) => void
 
-  constructor({canvasRes, osCanvasRes,width, height, dpr = 2}: StageConstructorProps, callback?: any) {
+  constructor({canvasRes, osCanvasRes,width, height, dpr = 2}: StageConstructorProps, callback?: (key: string) => void) {
     this.width = width;
     this.height = height;
     this.canvas = canvasRes;
@@ -53,11 +53,11 @@ export class Stage {
     this.offCtx.scale(this.dpr, this.dpr);
 
     this.shapesSet = new Set();
-
     this.onSelected = callback
 
     this.shapesActionsList = []
     this.setProxy()
+
 
     this.eventSimulator = new EventSimulator();
   }
@@ -72,13 +72,12 @@ export class Stage {
         const renderFunc = guideRenderFunc(el.type)
         if (!renderFunc) {
           throw new Error(el.type ? `${el.type}该类型暂未支持。`: '请传入正确格式的svg解析配置')
-          return
         }
         const shape = renderFunc && renderFunc({...el, dpr: this.dpr, nanoid})
         if (!shape) return
         nature && nature === 'interaction' && nanoid && shape.on(EventNames.click, () => {
           Reflect.set(this.shapesActionsProxy, nanoid, true)
-          this.onSelected(nanoid)
+          this.onSelected && this.onSelected(nanoid)
           this.render()
         })
         this.add(shape)
@@ -90,7 +89,7 @@ export class Stage {
    * 通过添加到renderChildren中循环渲染
    * @param shape
    */
-  add(shape: Shape) {
+  private add(shape: Shape) {
     // 判断是否绑定事件，如果未绑定事件，按正常渲染处理即可
     if (Object.keys(shape.getListeners()).length > 0) {
       const id = shape.getId();
@@ -103,7 +102,7 @@ export class Stage {
   /**
    * 循环渲染
    */
-  render() {
+  private render() {
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.renderChildren && this.renderChildren.forEach(shape => {
       // 只对绑定了事件的区域复制到离屏Canvas中渲染
@@ -124,6 +123,7 @@ export class Stage {
     this.renderChildren = [];
     // 清理保存的点击区域id
     this.shapesSet.clear();
+    this.shapesActionsList = []
     this.setProxy()
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.offCtx.clearRect(0, 0, this.width, this.height);
@@ -167,8 +167,10 @@ export class Stage {
   /**
    * 绑定点击事件
    * @param evt
+   * @param x
+   * @param y
    */
-  clickHandle(evt: Event, {x, y}) {
+  clickHandle(evt: Event, {x, y}: {x: number, y: number}) {
     const id = this.hitJudge(x, y) as string;
     this.eventSimulator.addAction({ type: ActionType.Down, id }, evt);
     this.eventSimulator.addAction({ type: ActionType.Up, id }, evt);
@@ -180,20 +182,14 @@ export class Stage {
     this.render()
   }
 
-  setProxy() {
+  private setProxy() {
     const defaultActionsObj = {}
     this.shapesActionsList.forEach(el => {
       Reflect.set(defaultActionsObj, el, true)
     })
-    this.shapesActionsProxy = new Proxy(defaultActionsObj, {
-      set: this.proxySetFn.bind(this)
-    })
+    this.shapesActionsProxy = {
+      ...defaultActionsObj
+    }
   }
 
-  proxySetFn(target, key, value) {
-    Reflect.set(target, key, value)
-    //数据有变化 触发onSelected
-    this.onSelected && this.onSelected(key)
-    return true
-  }
 }
