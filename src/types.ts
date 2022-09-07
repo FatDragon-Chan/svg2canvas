@@ -26,3 +26,4 @@ export interface StageConstructorProps  {
   height: number
   dpr: number
 }
+

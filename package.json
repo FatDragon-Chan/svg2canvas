@@ -4,7 +4,6 @@
   "description": "",
   "main": "./lib/svg2canvas.umd.js",
   "module": "./lib/svg2canvas.esm.js",
-  "typings": "./src/types",
   "repository": {
     "type": "git",
     "url": "https://github.com/FatDragon-Chan/svg2canvas.git"
